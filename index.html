@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Uno Óticas · Seis lojas em São Paulo</title>
+  <meta name="description" content="Uno Óticas: exame de vista gratuito, armações, lentes Varilux, Crizal e Transitions e óculos de sol com grau. Seis lojas em São Paulo (Aricanduva, Belém, Carrão, Santana, Tatuapé e Vila Formosa), envio para todo o Brasil e parcelamento em até 12x." />
+  <meta name="theme-color" content="#f06c2a" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <!-- antes do CSS chegar (o Vite o injeta pelo JS): fundo escuro e nada cru na tela -->
+  <style>html { background: #f06c2a; color-scheme: dark; } body { visibility: hidden; }</style>
+  <link rel="preload" href="/fonts/montserrat.ttf" as="font" type="font/ttf" crossorigin />
+</head>
+<body>
+  <!-- o palco: WebGL fixo atrás de tudo -->
+  <canvas class="palco" aria-hidden="true"></canvas>
+
+  <!-- camada de leitura: o WebGL redesenha estes textos e fotos no mesmo lugar (desfocados fora da lente, nítidos dentro) -->
+  <div class="placa">
+    <h1 class="abertura__titulo"><span>Tudo</span> <span>em</span> <span>foco</span></h1>
+
+    <div class="armacoes__nomes">
+      <p class="armacoes__nome">Quadrada</p>
+      <p class="armacoes__nome">Gatinho</p>
+      <p class="armacoes__nome">Aviador</p>
+      <p class="armacoes__nome">Redonda</p>
+    </div>
+
+    <div class="lentes__cartoes">
+      <div class="cartao" data-src="/img/lente-simples.webp"></div>
+      <div class="cartao" data-src="/img/lente-multifocal.webp"></div>
+      <div class="cartao" data-src="/img/lente-antirreflexo.webp"></div>
+      <div class="cartao" data-src="/img/praia.webp" data-foco-y="0.62"></div>
+      <div class="lentes__texto">
+        <p class="lentes__tipo">Visão simples</p>
+        <p class="lentes__frase">Uma distância só,<br />nítida de borda a borda.</p>
+      </div>
+      <div class="lentes__texto">
+        <p class="lentes__tipo">Multifocal</p>
+        <p class="lentes__frase">Longe, meio e perto<br />na mesma lente.</p>
+      </div>
+      <div class="lentes__texto">
+        <p class="lentes__tipo">Antirreflexo</p>
+        <p class="lentes__frase">Sem reflexo na tela<br />nem no farol.</p>
+      </div>
+      <div class="lentes__texto">
+        <p class="lentes__tipo">Lente fina</p>
+        <p class="lentes__frase">Grau alto sem<br />fundo de garrafa.</p>
+      </div>
+    </div>
+
+    <div class="sol__praia" data-src="/img/praia.webp" data-foco-y="0.62"></div>
+    <p class="sol__titulo">Sol com grau.</p>
+    <p class="sol__titulo">Sem brilho<br> na água.</p>
+
+    <div class="dias__fotos">
+      <div class="dias__foto" data-src="/img/dia-1-exame.webp"></div>
+      <div class="dias__foto" data-src="/img/dia-3-medida.webp"></div>
+      <div class="dias__foto" data-src="/img/dia-5-bancada.webp"></div>
+      <div class="dias__foto" data-src="/img/dia-7-entrega.webp"></div>
+    </div>
+
+    <p class="fecho__titulo"><span>Perto</span> <span>de você.</span></p>
+  </div>
+
+  <!-- interface fixa: sempre nítida -->
+  <div class="interface">
+    <header class="nav">
+      <a class="nav__marca" href="#topo" aria-label="Uno Óticas, voltar ao início">
+        <svg class="marca" viewBox="0 0 52 24" aria-hidden="true"><path d="M2 2v14a6 6 0 0 0 12 0V2" pathLength="1000" stroke-dasharray="1000" /><path d="M19 22V2l12 20V2" pathLength="1000" stroke-dasharray="1000" /><circle cx="42" cy="12" r="9" pathLength="1000" stroke-dasharray="1000" transform="rotate(-90 42 12)" /></svg>
+        <span class="nav__oticas">Óticas</span>
+      </a>
+      <nav class="nav__links" aria-label="Seções">
+        <a href="#armacoes">Armações</a>
+        <a href="#lentes">Lentes</a>
+        <a href="#agendar"><span class="longo">Exame grátis</span><span class="curto">Exame</span></a>
+      </nav>
+    </header>
+
+    <div class="setas">
+      <button class="seta" data-dir="-1" aria-label="Modelo anterior"><svg viewBox="0 0 16 16"><path d="M13 8H3M7.5 3.5 3 8l4.5 4.5" /></svg></button>
+      <button class="seta" data-dir="1" aria-label="Próximo modelo"><svg viewBox="0 0 16 16"><path d="M3 8h10M8.5 3.5 13 8l-4.5 4.5" /></svg></button>
+    </div>
+    <ol class="pontos" aria-label="Modelos">
+      <li><button data-modelo="0" aria-label="Quadrada" aria-current="true"></button></li>
+      <li><button data-modelo="1" aria-label="Gatinho"></button></li>
+      <li><button data-modelo="2" aria-label="Aviador"></button></li>
+      <li><button data-modelo="3" aria-label="Redonda"></button></li>
+    </ol>
+
+    <section class="hero" aria-label="Abertura">
+      <p class="prazo"><span class="mascara"><span>Exame de vista</span></span><span class="mascara"><span>gratuito,</span></span><span class="mascara"><span><strong>nas lojas Uno.</strong></span></span></p>
+      <div class="chamada">
+        <a class="pilula" href="#agendar"><span>Agendar exame</span></a>
+        <span class="chamada__fio" aria-hidden="true"></span>
+      </div>
+      <p class="vinte" aria-hidden="true"><span>20/20</span></p>
+    </section>
+
+    <section class="armacoes" aria-label="Armações">
+      <p class="medida" aria-hidden="true"><span>50□21</span><span>52□18</span><span>56□16</span><span>47□22</span></p>
+      <div class="ficha">
+        <p class="ficha__conta"><span class="ficha__n">01</span>/04</p>
+        <div class="ficha__itens">
+          <div class="ficha__item"><p class="ficha__cor">Tartaruga</p><p class="ficha__linha">Aro grosso, ponte baixa.</p><p class="ficha__preco">Parcela em até 12x</p></div>
+          <div class="ficha__item"><p class="ficha__cor">Preto</p><p class="ficha__linha">O canto puxado para cima.</p><p class="ficha__preco">Parcela em até 12x</p></div>
+          <div class="ficha__item"><p class="ficha__cor">Verde-garrafa</p><p class="ficha__linha">A gota do aviador, em acetato.</p><p class="ficha__preco">Parcela em até 12x</p></div>
+          <div class="ficha__item"><p class="ficha__cor">Cristal</p><p class="ficha__linha">Transparente, ponte alta.</p><p class="ficha__preco">Parcela em até 12x</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lentes" aria-label="Lentes">
+      <p class="lentes__conta"><span>Lentes</span><span class="lentes__n">01/04</span></p>
+      <p class="lentes__nota"><span>Varilux, Crizal e Transitions, no seu grau.</span></p>
+    </section>
+
+    <section class="sol" aria-label="Óculos de sol">
+      <div class="sol__info">
+        <p class="sol__lead"><span class="mascara"><span>Óculos de sol</span></span><span class="mascara"><span>com o seu grau.</span></span></p>
+        <p class="sol__det"><span class="mascara"><span>Um para o dia a dia, outro para o sol.</span></span><span class="mascara"><span>Consulte as condições na loja.</span></span></p>
+      </div>
+    </section>
+
+    <section class="dias" aria-label="Do exame à entrega">
+      <ol class="dias__legendas">
+        <li class="dias__legenda"><strong>Exame</strong><span>Exame de vista gratuito, na loja.</span></li>
+        <li class="dias__legenda"><strong>Armação</strong><span>Escolhida com calma, medida por medida.</span></li>
+        <li class="dias__legenda"><strong>Lentes</strong><span>Cortadas e montadas na bancada.</span></li>
+        <li class="dias__legenda"><strong>Entrega</strong><span>Na loja ou pelo correio, para todo o Brasil.</span></li>
+      </ol>
+    </section>
+  </div>
+
+  <!-- trilha de rolagem: um bloco por cena; o formulário e o rodapé sobem por cima do palco -->
+  <main class="trilha" id="topo">
+    <section class="cena" id="abertura" data-cena="abertura"></section>
+    <section class="cena" id="armacoes" data-cena="armacoes"></section>
+    <section class="cena" id="lentes" data-cena="lentes"></section>
+    <section class="cena" id="sol" data-cena="sol"></section>
+    <section class="cena" id="dias" data-cena="dias"></section>
+    <section class="cena" id="fecho" data-cena="fecho"></section>
+
+    <section class="fim" id="agendar" aria-labelledby="agenda-titulo">
+      <div class="fim__painel">
+        <div class="fim__estojo" aria-hidden="true"></div>
+        <form class="agenda" novalidate>
+          <h2 class="agenda__titulo" id="agenda-titulo">Exame de vista grátis</h2>
+          <p class="agenda__sub">Escolha a loja e o período. A conversa abre no WhatsApp dela para confirmar o horário.</p>
+          <div class="campos">
+            <label class="campo"><span>Nome</span><input name="nome" autocomplete="name" required /></label>
+            <label class="campo"><span>WhatsApp</span><input name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required /></label>
+          </div>
+          <fieldset class="escolha">
+            <legend>Loja</legend>
+            <div class="chips">
+              <label><input type="radio" name="loja" value="aricanduva" data-zap="551136244774" /><span>Aricanduva</span></label>
+              <label><input type="radio" name="loja" value="belem" data-zap="551124766667" /><span>Belém</span></label>
+              <label><input type="radio" name="loja" value="carrao" data-zap="551129427310" /><span>Carrão</span></label>
+              <label><input type="radio" name="loja" value="santana" data-zap="551134921003" checked /><span>Santana</span></label>
+              <label><input type="radio" name="loja" value="tatuape" data-zap="551127372773" /><span>Tatuapé</span></label>
+              <label><input type="radio" name="loja" value="vila-formosa" data-zap="551123648551" /><span>Vila Formosa</span></label>
+            </div>
+          </fieldset>
+          <fieldset class="escolha">
+            <legend>Período</legend>
+            <div class="chips">
+              <label><input type="radio" name="periodo" value="manha" checked /><span>Manhã</span></label>
+              <label><input type="radio" name="periodo" value="tarde" /><span>Tarde</span></label>
+            </div>
+          </fieldset>
+          <button class="pilula pilula--cheia" type="submit"><span>Agendar exame</span></button>
+          <p class="agenda__ok" role="status"></p>
+        </form>
+
+        <footer class="rodape" id="contato">
+          <div class="rodape__marca">
+            <svg class="marca" viewBox="0 0 52 24" aria-hidden="true"><path d="M2 2v14a6 6 0 0 0 12 0V2" /><path d="M19 22V2l12 20V2" /><circle cx="42" cy="12" r="9" /></svg>
+            <p>Seis lojas em São Paulo.<br />Envio para <strong>todo o Brasil.</strong></p>
+          </div>
+          <nav class="rodape__links" aria-label="Rodapé">
+            <a href="#armacoes">Armações</a>
+            <a href="#lentes">Lentes</a>
+            <a href="#sol">Óculos de sol</a>
+            <a href="#agendar">Exame grátis</a>
+          </nav>
+          <div class="rodape__loja">
+            <p>Aricanduva · Av. Rio das Pedras, 1321<br />Belém · R. Padre Adelino, 408<br />Carrão · Av. Conselheiro Carrão, 2002</p>
+            <p>Santana · R. Conselheiro Moreira de Barros, 985<br />Tatuapé · R. Monte Serrat, 365<br />Vila Formosa</p>
+            <p>4,9 no Google · 106 avaliações</p>
+            <p><a href="https://www.instagram.com/unooticas/" target="_blank" rel="noopener">Instagram</a> · <a href="https://linktr.ee/unooticas" target="_blank" rel="noopener">WhatsApp das lojas</a></p>
+          </div>
+        </footer>
+        <p class="fim__legal">© 2026 Uno Óticas · Parcelamos em até 12x · Enviamos para todo o Brasil</p>
+        <p class="fim__palavra" aria-hidden="true">UNO</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- loader: o símbolo se desenha e a acuidade sobe com o carregamento -->
+  <div class="carga" aria-hidden="true">
+    <svg class="carga__marca" viewBox="0 0 52 24"><path d="M2 2v14a6 6 0 0 0 12 0V2" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000" /><path d="M19 22V2l12 20V2" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000" /><circle cx="42" cy="12" r="9" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="1000" transform="rotate(-90 42 12)" /></svg>
+    <p class="carga__acuidade">20/200</p>
+  </div>
+
+  <div class="barra" aria-hidden="true"><span class="barra__polegar"></span></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
